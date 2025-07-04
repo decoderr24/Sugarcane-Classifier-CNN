@@ -12,7 +12,6 @@ Thumbs.db
 dataset/
 
 # Model yang sudah dilatih (biasanya berukuran besar)
-*.keras
 *.h5
 
 # Folder output/hasil (opsional, biasanya tidak perlu di-version control)

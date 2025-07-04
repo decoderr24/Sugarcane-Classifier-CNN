@@ -1,0 +1,18 @@
+# Folder Virtual Environment (wajib diabaikan)
+venv/
+
+# Cache Python
+__pycache__/
+
+# File sistem operasi (untuk macOS dan Windows)
+.DS_Store
+Thumbs.db
+
+# Dataset (jika ukurannya besar dan tidak akan diunggah ke GitHub)
+dataset/
+
+# Model yang sudah dilatih (biasanya berukuran besar)
+*.h5
+
+# Folder output/hasil (opsional, biasanya tidak perlu di-version control)
+result/
