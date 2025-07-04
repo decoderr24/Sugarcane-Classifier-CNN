@@ -9,7 +9,7 @@ st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 # Load model (PATH SUDAH SESUAI)
 # ===============================
 @st.cache_resource
-def load_model():
+def load_trained_model():
     """Memuat model Keras terbaik yang sudah dilatih."""
     try:
         # Membuat path yang benar, relatif terhadap lokasi script ini
