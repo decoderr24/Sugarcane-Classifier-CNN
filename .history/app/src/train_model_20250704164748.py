@@ -1,0 +1,224 @@
+import os
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix
+from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint 
+import seaborn as sns
+
+# =================================================================================
+# LANGKAH 1 & 2: PERSIAPAN DATA DAN AUGMENTASI
+# =================================================================================
+
+# Augmentasi yang lebih moderat
+train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
+    rescale=1./255,
+    rotation_range=20,     # Kurangi dari 30
+    width_shift_range=0.2, # Kurangi dari 0.4
+    height_shift_range=0.2,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True,
+    fill_mode='nearest'
+)
+
+# Untuk data validasi hanya rescale
+validation_datagen = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1./255)
+
+# Definisikan batch size
+batch_size = 32
+
+# Path yang sudah diperbaiki (tanpa '/' di awal)
+train_generator = train_datagen.flow_from_directory(
+    'dataset/datatebu/train',
+    target_size=(224, 224),
+    batch_size=batch_size,
+    class_mode='categorical'
+)
+
+validation_generator = validation_datagen.flow_from_directory(
+    'dataset/datatebu/validation',
+    target_size=(224, 224),
+    batch_size=batch_size,
+    class_mode='categorical',
+    shuffle=False
+)
+
+# =================================================================================
+# LANGKAH 3: BANGUN ARSITEKTUR MODEL (DENGAN REGULARISASI LEBIH KUAT)
+# =================================================================================
+
+# Muat model dasar MobileNetV2
+base_model = tf.keras.applications.MobileNetV2(
+    input_shape=(224, 224, 3),
+    include_top=False,
+    weights='imagenet'
+)
+
+# Bekukan (freeze) semua layer di model dasar
+base_model.trainable = False
+
+from tensorflow.keras.regularizers import l2
+# Arsitektur yang lebih sederhana dulu
+model = tf.keras.models.Sequential([
+    base_model,
+    tf.keras.layers.GlobalAveragePooling2D(),
+    tf.keras.layers.BatchNormalization(),
+    tf.keras.layers.Dense(512, activation='relu'),
+    tf.keras.layers.Dropout(0.3),  # Kurangi dari 0.7
+    tf.keras.layers.Dense(256, activation='relu'),
+    tf.keras.layers.Dropout(0.2),  # Kurangi dari 0.6
+    tf.keras.layers.Dense(4, activation='softmax')
+])
+# LANGKAH 4: KOMPILASI MODEL
+
+# Mengonfigurasi proses belajar model
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Menampilkan ringkasan arsitektur model
+print("\n--- Ringkasan Arsitektur Model ---")
+model.summary()
+
+# Tambahkan impor ini di bagian atas file Anda
+
+# LANGKAH 5: LATIH MODEL DENGAN FINE-TUNING
+print("\nMemulai proses training model...")
+
+# Tentukan jumlah epoch untuk setiap fase
+initial_epochs = 30
+fine_tune_epochs = 20
+total_epochs = initial_epochs + fine_tune_epochs
+
+# Siapkan callback untuk mengurangi learning rate secara otomatis
+learning_rate_reduction = ReduceLROnPlateau(
+    monitor='val_loss',
+    patience=5, 
+    verbose=1, 
+    factor=0.5, 
+    min_lr=0.00001
+)
+
+# Tambahkan Early Stopping
+early_stopping = EarlyStopping(
+    monitor='val_loss',
+    patience=10,
+    restore_best_weights=True,
+    verbose=1,
+    mode='min'
+)
+
+# Tambah ModelCheckpoint untuk menyimpan model terbaik
+checkpoint = ModelCheckpoint(
+    'model/best_model.keras',  # Simpan di folder model
+    monitor='val_loss',
+    save_best_only=True,
+    verbose=1,
+    mode='min'
+)
+
+# Gabungkan semua callbacks
+callbacks = [learning_rate_reduction, early_stopping, checkpoint]
+
+# --- Fase 1: Training Awal (Hanya layer atas) ---
+print("\n--- Fase 1: Training Awal ---")
+history = model.fit(
+    train_generator,
+    epochs=initial_epochs,
+    validation_data=validation_generator,
+    callbacks=callbacks  # Gunakan callbacks yang sudah lengkap
+)
+
+# --- Fase 2: Fine-Tuning ---
+print("\n--- Fase 2: Memulai Fine-Tuning ---")
+
+# Cairkan (unfreeze) base_model
+base_model.trainable = True
+
+# Bekukan semua layer kecuali layer teratas
+fine_tune_at = 50
+for layer in base_model.layers[:fine_tune_at]:
+    layer.trainable = False
+
+# Kompilasi ulang model
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.00005),
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Lanjutkan training (fine-tuning)
+history_fine = model.fit(
+    train_generator,
+    epochs=total_epochs,
+    initial_epoch=initial_epochs,
+    validation_data=validation_generator,
+    callbacks=callbacks  # Gunakan callbacks yang sama
+)
+
+# Gabungkan history dari kedua fase training
+history.history['accuracy'].extend(history_fine.history['accuracy'])
+history.history['val_accuracy'].extend(history_fine.history['val_accuracy'])
+history.history['loss'].extend(history_fine.history['loss'])
+history.history['val_loss'].extend(history_fine.history['val_loss'])
+
+print("Proses training dan fine-tuning selesai.")
+
+# ====================================================================
+# LOAD MODEL TERBAIK SETELAH TRAINING SELESAI
+# ====================================================================
+print("\nMemuat model terbaik yang tersimpan...")
+try:
+    # Load model terbaik yang disimpan oleh ModelCheckpoint
+    model = tf.keras.models.load_model('model/best_model.keras')
+    print("Model terbaik berhasil dimuat dari: model/best_model.keras")
+except:
+    print("Model terbaik tidak ditemukan, menggunakan model terakhir")
+
+# ====================================================================
+# LANGKAH 6: EVALUASI & SIMPAN HASIL
+# ====================================================================
+
+# Ambil catatan akurasi dan loss dari variabel 'history'
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
+loss = history.history['loss']
+val_loss = history.history['val_loss']
+
+# Pastikan semua data memiliki panjang yang sama
+min_length = min(len(acc), len(val_acc), len(loss), len(val_loss))
+acc = acc[:min_length]
+val_acc = val_acc[:min_length]
+loss = loss[:min_length]
+val_loss = val_loss[:min_length]
+
+# Gunakan panjang data yang sebenarnya
+epochs_range = range(min_length)
+
+print(f"Training berjalan selama {min_length} epoch")
+print(f"Rencana awal: {total_epochs} epoch")
+if min_length < total_epochs:
+    print("Early stopping menghentikan training lebih awal")
+
+# Buat plot untuk Akurasi dan Loss
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(epochs_range, acc, label='Training Accuracy')
+plt.plot(epochs_range, val_acc, label='Validation Accuracy')
+plt.legend(loc='lower right')
+plt.title('Training and Validation Accuracy')
+
+plt.subplot(1, 2, 2)
+plt.plot(epochs_range, loss, label='Training Loss')
+plt.plot(epochs_range, val_loss, label='Validation Loss')
+plt.legend(loc='upper right')
+plt.title('Training and Validation Loss')
+
+# Simpan gambar plot ke folder result
+plot_path = os.path.join('result', 'training_history_plot.png')
+plt.savefig(plot_path)
+print(f"\nPlot riwayat training disimpan di: {plot_path}")
+plt.show()

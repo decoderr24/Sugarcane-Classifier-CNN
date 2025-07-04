@@ -4,17 +4,14 @@ import numpy as np
 from PIL import Image
 import os
 
-st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 # ===============================
 # Load model (PATH SUDAH SESUAI)
 # ===============================
 @st.cache_resource
 def load_model():
-    model_path = r"C:\project\sugarcane-classifier-CNN\app\model\best_model.keras"
-    if not os.path.exists(model_path):
-        st.error(f"Model tidak ditemukan di path:\n{model_path}")
-        st.stop()
-    return tf.keras.models.load_model(model_path)
+    model_path = os.path.join("app", "model" "best_model.keras")
+    model = tf.keras.models.load_model(model_path)
+    return model
 
 model = load_model()
 
@@ -26,6 +23,7 @@ class_names = ['healthy', 'redrot', 'rust', 'yellow']
 # ===============================
 # Tampilan Streamlit
 # ===============================
+st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 st.title("🌿 Sugarcane Leaf Disease Classifier")
 st.markdown("Upload gambar daun tebu dan sistem akan memprediksi jenis penyakitnya menggunakan model CNN MobileNetV2.")
 

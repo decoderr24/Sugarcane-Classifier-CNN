@@ -4,7 +4,6 @@ import numpy as np
 from PIL import Image
 import os
 
-st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 # ===============================
 # Load model (PATH SUDAH SESUAI)
 # ===============================
@@ -26,6 +25,7 @@ class_names = ['healthy', 'redrot', 'rust', 'yellow']
 # ===============================
 # Tampilan Streamlit
 # ===============================
+st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 st.title("🌿 Sugarcane Leaf Disease Classifier")
 st.markdown("Upload gambar daun tebu dan sistem akan memprediksi jenis penyakitnya menggunakan model CNN MobileNetV2.")
 

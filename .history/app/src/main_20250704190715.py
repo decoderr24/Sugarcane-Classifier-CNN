@@ -4,7 +4,6 @@ import numpy as np
 from PIL import Image
 import os
 
-st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 # ===============================
 # Load model (PATH SUDAH SESUAI)
 # ===============================
