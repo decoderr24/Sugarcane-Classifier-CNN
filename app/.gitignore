@@ -9,7 +9,7 @@ __pycache__/
 Thumbs.db
 
 # Dataset (jika ukurannya besar dan tidak akan diunggah ke GitHub)
-dataset/datatebu
+dataset/
 
 # Model yang sudah dilatih (biasanya berukuran besar)
 *.keras
