@@ -58,13 +58,13 @@ Model dikembangkan menggunakan pendekatan **Transfer Learning** dengan arsitektu
 Model akhir berhasil mencapai performa yang solid dalam membedakan keempat kelas penyakit.
 
 #### Grafik Training & Validasi
-![Grafik Training](![final](https://github.com/user-attachments/assets/25957760-5f72-4629-91d5-014217094f2b)
-)
+![final](https://github.com/user-attachments/assets/8136d9c5-9ba1-4ac7-87cf-72e890315088)
+
 *Grafik menunjukkan proses training yang sehat, di mana akurasi validasi terus meningkat seiring dengan penurunan loss validasi.*
 
 #### Confusion Matrix (Data Test)
-![Confusion Matrix](![confusion_matrix_FINAL](https://github.com/user-attachments/assets/e3374636-a182-4c72-a6f8-612409715130)
-)
+![confusion_matrix_FINAL](https://github.com/user-attachments/assets/05800923-9604-456c-8e00-f48021dd82ce)
+
 *Confusion matrix pada data tes menunjukkan kemampuan generalisasi model yang baik pada data yang belum pernah dilihat sebelumnya.*
 
 ## Instalasi
