@@ -64,7 +64,7 @@ model = tf.keras.models.Sequential([
 
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
-    loss='categorical_crossentropy',
+    loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
     metrics=['accuracy']
 )
 
@@ -103,8 +103,8 @@ for layer in base_model.layers[:fine_tune_at]:
     layer.trainable = False
 
 model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=5e-5),
-    loss='categorical_crossentropy',
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.00005),
+    loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
     metrics=['accuracy']
 )
 
@@ -165,4 +165,3 @@ plt.xlabel('Predicted Label')
 plt.ylabel('True Label')
 plt.savefig('result/confusion_matrix.png')
 plt.show()
-### MODEL TANPA SMOOTHING
