@@ -7,7 +7,9 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCh
 from tensorflow.keras.regularizers import l2
 import seaborn as sns
 
-# AUGMENTASI & PREPROCESSING
+# =================================================================================
+# LANGKAH 1: AUGMENTASI & DATASET
+# =================================================================================
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale=1./255,
     rotation_range=25,
@@ -39,7 +41,7 @@ val_generator = val_datagen.flow_from_directory(
     shuffle=False
 )
 
-# MODELLING CNN - MobileNetV2 + Regularisasi
+# MODEL CNN - MobileNetV2 + Regularisasi
 base_model = tf.keras.applications.MobileNetV2(
     input_shape=(224, 224, 3),
     include_top=False,
@@ -66,14 +68,18 @@ model.compile(
 
 model.summary()
 
-# CALLBACK
+# =================================================================================
+# LANGKAH 3: CALLBACK
+# =================================================================================
 callbacks = [
     ReduceLROnPlateau(monitor='val_loss', patience=5, verbose=1, factor=0.5, min_lr=1e-5),
     EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True, verbose=1),
     ModelCheckpoint('model/best_model.keras', monitor='val_loss', save_best_only=True, verbose=1)
 ]
 
-# TRAINING PHASE 1 (Feature Extraction)
+# =================================================================================
+# LANGKAH 4: TRAINING PHASE 1 (Feature Extraction)
+# =================================================================================
 initial_epochs = 30
 fine_tune_epochs = 20
 total_epochs = initial_epochs + fine_tune_epochs
@@ -85,7 +91,9 @@ history = model.fit(
     callbacks=callbacks
 )
 
-# FINE-TUNING PHASE 2 (Unfreeze 100 layer terakhir)
+# =================================================================================
+# LANGKAH 5: FINE-TUNING PHASE 2 (Unfreeze 100 layer terakhir)
+# =================================================================================
 base_model.trainable = True
 
 fine_tune_at = len(base_model.layers) - 100
@@ -110,7 +118,9 @@ history_fine = model.fit(
 for key in history.history:
     history.history[key].extend(history_fine.history[key])
 
-# & EVALUASI MODEL
+# =================================================================================
+# LANGKAH 6: PLOT & EVALUASI
+# =================================================================================
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 loss = history.history['loss']

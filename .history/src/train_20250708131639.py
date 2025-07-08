@@ -85,7 +85,8 @@ history = model.fit(
     callbacks=callbacks
 )
 
-# FINE-TUNING PHASE 2 (Unfreeze 100 layer terakhir)
+# =================================================================================
+# LANGKAH 5: FINE-TUNING PHASE 2 (Unfreeze 100 layer terakhir)
 base_model.trainable = True
 
 fine_tune_at = len(base_model.layers) - 100
@@ -110,7 +111,9 @@ history_fine = model.fit(
 for key in history.history:
     history.history[key].extend(history_fine.history[key])
 
-# & EVALUASI MODEL
+# =================================================================================
+# LANGKAH 6: PLOT & EVALUASI
+# =================================================================================
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 loss = history.history['loss']

@@ -110,7 +110,9 @@ history_fine = model.fit(
 for key in history.history:
     history.history[key].extend(history_fine.history[key])
 
-# & EVALUASI MODEL
+# =================================================================================
+# LANGKAH 6: PLOT & EVALUASI
+# =================================================================================
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 loss = history.history['loss']
