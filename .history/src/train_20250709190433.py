@@ -134,6 +134,7 @@ os.makedirs("result", exist_ok=True)
 plt.savefig("result/training_history_plot.png")
 plt.show()
 
+# =================================================================================
 # CONFUSION MATRIX
 model = tf.keras.models.load_model('model/best_model.keras')
 Y_pred = model.predict(val_generator)
