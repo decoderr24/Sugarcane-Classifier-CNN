@@ -7,7 +7,9 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCh
 from tensorflow.keras.regularizers import l2
 import seaborn as sns
 
-# PREPROCESSING AUGMENTASI & DATASET
+# =================================================================================
+# LANGKAH 1: AUGMENTASI & DATASET
+# =================================================================================
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     rescale=1./255,
     rotation_range=25,
