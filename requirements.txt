@@ -1,7 +1,7 @@
-tensorflow-cpu
-numpy
+streamlit
+tensorflow-cpu==2.15.0
+numpy==1.26.4
 Pillow
 matplotlib
 seaborn
 scikit-learn
-streamlit
