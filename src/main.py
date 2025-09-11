@@ -12,10 +12,16 @@ st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 @st.cache_resource
 def load_trained_model():
     """Memuat model Keras terbaik yang sudah dilatih."""
-    model_path = os.path.join("model", "best_model_fixed.h5")
     try:
-        model = tf.keras.models.load_model(model_path, compile=False)
+        # Get correct path to model
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(current_dir)
+        model_path = os.path.join(project_root, "model", "best_model_export")
+        
+        # Load model directly as SavedModel
+        model = tf.saved_model.load(model_path)
         return model
+        
     except Exception as e:
         st.error(f"❌ Error saat memuat model dari path '{model_path}': {e}")
         return None
@@ -42,19 +48,26 @@ if uploaded_file is not None and model is not None:
     image = Image.open(uploaded_file).convert('RGB')
     st.image(image, caption="🖼️ Gambar yang diupload", use_column_width=True)
 
-    # ===============================
     # Preprocessing Gambar
-    # ===============================
     image_resized = image.resize((224, 224))
     img_array = np.array(image_resized) / 255.0
     img_batch = np.expand_dims(img_array, axis=0)
 
-    # ===============================
     # Prediksi
-    # ===============================
-    predictions = model.predict(img_batch)
-    pred_index = np.argmax(predictions)
-    confidence = np.max(predictions) * 100
+    predict_fn = model.signatures["serving_default"]
+    
+    # Get the input tensor name from model signature
+    input_name = list(predict_fn.structured_input_signature[1].keys())[0]
+    
+    # Make prediction with correct input name
+    predictions = predict_fn(**{input_name: tf.convert_to_tensor(img_batch, dtype=tf.float32)})
+    
+    # Get the output tensor name
+    output_name = list(predict_fn.structured_outputs.keys())[0]
+    predictions = predictions[output_name].numpy()
+    
+    pred_index = np.argmax(predictions[0])
+    confidence = np.max(predictions[0]) * 100
     predicted_label = class_names[pred_index]
 
     # ===============================
