@@ -5,21 +5,21 @@ from PIL import Image
 import os
 
 st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
+
 # ===============================
 # Load model (PATH SUDAH SESUAI)
 # ===============================
 @st.cache_resource
-@st.cache_resource
 def load_trained_model():
     """Memuat model Keras terbaik yang sudah dilatih."""
-    # Path sekarang sederhana karena struktur folder sudah standar
-    model_path = os.path.join('model', 'best_model.keras')
+    model_path = os.path.join("model", "best_model_fixed.h5")
     try:
-        model = tf.keras.models.load_model(model_path)
+        model = tf.keras.models.load_model(model_path, compile=False)
         return model
     except Exception as e:
-        st.error(f"Error saat memuat model dari path '{model_path}': {e}")
+        st.error(f"❌ Error saat memuat model dari path '{model_path}': {e}")
         return None
+
 model = load_trained_model()
 
 # ===============================
@@ -31,11 +31,14 @@ class_names = ['healthy', 'redrot', 'rust', 'yellow']
 # Tampilan Streamlit
 # ===============================
 st.title("🌿 Sugarcane Leaf Disease Classifier")
-st.markdown("Upload gambar daun tebu dan sistem akan memprediksi jenis penyakitnya menggunakan model CNN MobileNetV2.")
+st.markdown(
+    "Upload gambar daun tebu dan sistem akan memprediksi jenis penyakitnya "
+    "menggunakan model CNN MobileNetV2."
+)
 
 uploaded_file = st.file_uploader("📤 Upload gambar daun tebu", type=["jpg", "jpeg", "png"])
 
-if uploaded_file is not None:
+if uploaded_file is not None and model is not None:
     image = Image.open(uploaded_file).convert('RGB')
     st.image(image, caption="🖼️ Gambar yang diupload", use_column_width=True)
 
