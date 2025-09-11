@@ -1,8 +1,9 @@
+import os
 import streamlit as st
 import tensorflow as tf
+import gdown
 import numpy as np
 from PIL import Image
-import os
 
 st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 
@@ -11,19 +12,20 @@ st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 # ===============================
 @st.cache_resource
 def load_trained_model():
-    """Memuat model Keras terbaik yang sudah dilatih."""
+    """Load model from Google Drive if not exists locally"""
     try:
-        # Get correct path to model
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.dirname(current_dir)
-        model_path = os.path.join(project_root, "model", "best_model_export")
+        # Google Drive folder/file ID containing the model
+        model_url = "YOUR_GOOGLE_DRIVE_ID"
+        model_path = os.path.join(os.path.dirname(__file__), "model")
         
-        # Load model directly as SavedModel
-        model = tf.saved_model.load(model_path)
+        if not os.path.exists(model_path):
+            st.info("⏳ Downloading model files...")
+            gdown.download_folder(url=model_url, output=model_path, quiet=False)
+            
+        model = tf.saved_model.load(os.path.join(model_path, "best_model_export"))
         return model
-        
     except Exception as e:
-        st.error(f"❌ Error saat memuat model dari path '{model_path}': {e}")
+        st.error(f"❌ Error loading model: {e}")
         return None
 
 model = load_trained_model()
@@ -78,5 +80,5 @@ if uploaded_file is not None and model is not None:
     st.info(f"Akurasi : **{confidence:.2f}%**")
 
     st.markdown("### 📊 Probabilitas Semua Kelas:")
-    for i, name in enumerate(class_names):
+    for i, name in enumerate(class_names):          
         st.write(f"- {name}: {predictions[0][i]*100:.2f}%")
