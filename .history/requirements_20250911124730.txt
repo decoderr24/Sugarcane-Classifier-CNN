@@ -1,0 +1,7 @@
+streamlit
+tensorflow-cpu==2.
+numpy==1.26.4
+Pillow
+matplotlib
+seaborn
+scikit-learn
