@@ -16,3 +16,6 @@ dataset/
 
 # Folder output/hasil (opsional, biasanya tidak perlu di-version control)
 result/
+# abaikan semua kecuali .h5 model dibawah
+!model/best_model_fixed.h5
+!model/best_model_rebuild.h5
