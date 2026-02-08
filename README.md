@@ -62,11 +62,6 @@ Model akhir berhasil mencapai performa yang solid dalam membedakan keempat kelas
 
 *Grafik menunjukkan proses training yang sehat, di mana akurasi validasi terus meningkat seiring dengan penurunan loss validasi.*
 
-#### Confusion Matrix (Data Test)
-![confusion_matrix_FINAL](https://github.com/user-attachments/assets/05800923-9604-456c-8e00-f48021dd82ce)
-
-*Confusion matrix pada data tes menunjukkan kemampuan generalisasi model yang baik pada data yang belum pernah dilihat sebelumnya.*
-
 ## Instalasi
 Untuk menjalankan proyek ini secara lokal, ikuti langkah-langkah berikut:
 
@@ -110,3 +105,4 @@ Buka browser Anda dan akses `http://localhost:8501`.
 * Scikit-learn
 * Seaborn & Matplotlib
 * NumPy
+
