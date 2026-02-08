@@ -1,8 +1,7 @@
 streamlit==1.37.1
 tensorflow-cpu==2.15.0
-keras==2.13.1
-pillow
 numpy<2.0.0
+pillow
 matplotlib
 seaborn
 scikit-learn
