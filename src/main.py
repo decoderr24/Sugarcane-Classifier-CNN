@@ -9,36 +9,34 @@ st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 
 @st.cache_resource
 def load_saved_model():
-    """Memuat model Keras (.h5) dengan mode kompatibilitas untuk menghindari error batch_shape."""
     try:
-        # Menentukan path file model
         script_dir = os.path.dirname(os.path.realpath(__file__))
         project_root = os.path.abspath(os.path.join(script_dir, ".."))
         path_to_load = os.path.join(project_root, "model", "best_model_rebuild.h5")
         
-        if not os.path.exists(path_to_load):
-            st.error(f"❌ File model tidak ditemukan di: {path_to_load}")
-            return None
-
-        st.info("🚀 Memuat model dengan mode kompatibilitas...")
-        
-        # Mengimpor InputLayer untuk memetakan objek kustom jika diperlukan
+        # TEKNIK KHUSUS: Mendefinisikan ulang InputLayer agar mengabaikan batch_shape
         from tensorflow.keras.layers import InputLayer
+
+        class FixedInputLayer(InputLayer):
+            def __init__(self, *args, **kwargs):
+                # Hapus batch_shape jika ada di dalam kwargs sebelum inisialisasi
+                kwargs.pop('batch_shape', None)
+                super().__init__(*args, **kwargs)
+
+        st.info("🚀 Memuat model dengan pembersihan layer...")
         
-        # Memuat model tanpa kompilasi untuk menghindari error tipe data (tuple)
+        # Muat model dengan custom_objects agar menggunakan FixedInputLayer
         model = tf.keras.models.load_model(
             path_to_load, 
             compile=False,
-            custom_objects={'InputLayer': InputLayer}
+            custom_objects={'InputLayer': FixedInputLayer}
         )
+        
         st.success("✅ Model berhasil dimuat!")
         return model
-
     except Exception as e:
-        # Menangkap error spesifik seperti 'batch_shape' atau 'tuple'
         st.error(f"❌ Gagal memuat model: {e}")
         return None
-
 # Inisialisasi model dan daftar kelas
 model = load_saved_model()
 class_names = ['healthy', 'redrot', 'rust', 'yellow']
