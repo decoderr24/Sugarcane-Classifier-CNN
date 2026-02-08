@@ -21,7 +21,7 @@ def load_saved_model():
 
         st.info("🚀 Memuat model (.h5)...")
         # Menggunakan Keras load_model untuk file .h5
-        model = tf.keras.models.load_model(path_to_load)
+        model = tf.keras.models.load_model(path_to_load, compile=False)
         st.success("✅ Model berhasil dimuat!")
         return model
 
