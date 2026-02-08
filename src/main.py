@@ -14,22 +14,26 @@ def load_saved_model():
         project_root = os.path.abspath(os.path.join(script_dir, ".."))
         path_to_load = os.path.join(project_root, "model", "best_model_rebuild.h5")
         
-        # TEKNIK KHUSUS: Mendefinisikan ulang InputLayer agar mengabaikan batch_shape
-        from tensorflow.keras.layers import InputLayer
+        if not os.path.exists(path_to_load):
+            st.error(f"❌ File model tidak ditemukan di: {path_to_load}")
+            return None
 
-        class FixedInputLayer(InputLayer):
-            def __init__(self, *args, **kwargs):
-                # Hapus batch_shape jika ada di dalam kwargs sebelum inisialisasi
-                kwargs.pop('batch_shape', None)
-                super().__init__(*args, **kwargs)
-
-        st.info("🚀 Memuat model dengan pembersihan layer...")
+        st.info("🚀 Memuat model dengan pembersihan metadata total...")
         
-        # Muat model dengan custom_objects agar menggunakan FixedInputLayer
+        # Penanganan khusus untuk error DTypePolicy dan batch_shape
+        from tensorflow.keras.layers import InputLayer
+        
+        # Objek kustom untuk menangani metadata yang tidak dikenal di TF 2.13
+        custom_objects = {
+            'DTypePolicy': lambda **kwargs: None,
+            'InputLayer': InputLayer
+        }
+
+        # Muat model dengan mengabaikan konfigurasi yang tidak kompatibel
         model = tf.keras.models.load_model(
             path_to_load, 
             compile=False,
-            custom_objects={'InputLayer': FixedInputLayer}
+            custom_objects=custom_objects
         )
         
         st.success("✅ Model berhasil dimuat!")
