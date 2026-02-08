@@ -1,9 +1,8 @@
 streamlit
 tensorflow-cpu==2.13.0
-keras==2.15.0
-numpy<2.0.0
 pillow
-matplotlib==3.9.2
-seaborn==0.13.2
-scikit-learn==1.5.1
-gdown==4.7.1
+numpy<2.0.0
+matplotlib
+seaborn
+scikit-learn
+gdown
