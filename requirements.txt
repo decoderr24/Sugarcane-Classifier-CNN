@@ -1,8 +1,8 @@
 streamlit==1.37.1
-tensorflow-cpu==2.16.1
-keras==3.2.1
+tensorflow-cpu==2.15.0
+keras==2.15.0
 numpy==1.26.4
-Pillow==10.2.0
+pillow
 matplotlib==3.9.2
 seaborn==0.13.2
 scikit-learn==1.5.1
