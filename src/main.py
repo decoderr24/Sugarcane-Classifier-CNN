@@ -13,7 +13,7 @@ def load_saved_model():
         script_dir = os.path.dirname(os.path.realpath(__file__))
         project_root = os.path.abspath(os.path.join(script_dir, ".."))
         # Diarahkan ke file .h5 yang baru kita upload
-        path_to_load = os.path.join(project_root, "model", "best_model_rebuild.h5")
+        path_to_load = os.path.join(project_root, "model", "best_model_fixed.h5")
         
         if not os.path.exists(path_to_load):
             st.error(f"❌ File model tidak ditemukan di: {path_to_load}")
