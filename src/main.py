@@ -14,24 +14,18 @@ def load_saved_model():
         project_root = os.path.abspath(os.path.join(script_dir, ".."))
         path_to_load = os.path.join(project_root, "model", "best_model_rebuild.h5")
         
-        if not os.path.exists(path_to_load):
-            st.error(f"❌ File model tidak ditemukan!")
-            return None
-
-        st.info("🚀 Memuat model dalam Mode Legacy...")
-        
-        # Menggunakan jalur legacy untuk menghindari error DTypePolicy dan batch_shape
+        # Objek kustom untuk mengabaikan metadata yang tidak dikenali di versi TF berbeda
         from tensorflow.keras.layers import InputLayer
-        import tensorflow.keras as keras
+        custom_objects = {
+            'InputLayer': InputLayer,
+            'DTypePolicy': lambda **kwargs: None
+        }
 
-        # Trik untuk mengabaikan metadata yang tidak dikenali
         model = tf.keras.models.load_model(
             path_to_load, 
             compile=False,
-            custom_objects={'InputLayer': InputLayer, 'DTypePolicy': lambda **kwargs: None}
+            custom_objects=custom_objects
         )
-        
-        st.success("✅ Model berhasil dimuat!")
         return model
     except Exception as e:
         st.error(f"❌ Gagal memuat model: {e}")
