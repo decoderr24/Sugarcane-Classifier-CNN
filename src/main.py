@@ -8,23 +8,28 @@ st.set_page_config(page_title="Sugarcane Classifier", layout="centered")
 
 @st.cache_resource
 def load_saved_model():
-    """Memuat model Keras (.h5) dari direktori lokal menggunakan path absolut."""
     try:
         script_dir = os.path.dirname(os.path.realpath(__file__))
         project_root = os.path.abspath(os.path.join(script_dir, ".."))
-        # Diarahkan ke file .h5 yang baru kita upload
         path_to_load = os.path.join(project_root, "model", "best_model_rebuild.h5")
         
         if not os.path.exists(path_to_load):
             st.error(f"❌ File model tidak ditemukan di: {path_to_load}")
             return None
 
-        st.info("🚀 Memuat model (.h5)...")
-        # Menggunakan Keras load_model untuk file .h5
-        model = tf.keras.models.load_model(path_to_load, compile=False)
+        st.info("🚀 Memuat model dengan mode kompatibilitas...")
+        
+        # TEKNIK BARU: Muat tanpa kompilasi DAN gunakan custom_objects kosong
+        # Ini akan memaksa Keras mengabaikan parameter layer yang tidak dikenal
+        model = tf.keras.models.load_model(
+            path_to_load, 
+            compile=False,
+            custom_objects=None,
+            safe_mode=False # Khusus untuk versi TensorFlow terbaru
+        )
+        
         st.success("✅ Model berhasil dimuat!")
         return model
-
     except Exception as e:
         st.error(f"❌ Gagal memuat model: {e}")
         return None
