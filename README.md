@@ -16,7 +16,7 @@ Aplikasi web interaktif juga dikembangkan menggunakan Streamlit untuk memungkink
 ## Dataset
 Dataset yang digunakan adalah **DTM1Kv1** yang tersedia di Kaggle.
 * **Link Dataset:** [https://www.kaggle.com/datasets/novalsofyan/dtm1kv1/data](https://www.kaggle.com/datasets/novalsofyan/dtm1kv1/data)
-* Dataset ini terdiri dari empat kelas dengan total 804 gambar yang telah dibagi menjadi data latih, validasi, dan tes.
+* Dataset ini terdiri dari empat kelas dengan total 804 gambar (captured manually) yang telah dibagi menjadi data latih, validasi, dan tes.
 
 ## Struktur Proyek
 ```
