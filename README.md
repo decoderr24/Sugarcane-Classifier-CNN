@@ -61,3 +61,6 @@ Model akhir berhasil mencapai performa yang solid dalam membedakan keempat kelas
 ![final](https://github.com/user-attachments/assets/8136d9c5-9ba1-4ac7-87cf-72e890315088)
 
 *Grafik menunjukkan proses training yang sehat, di mana akurasi validasi terus meningkat seiring dengan penurunan loss validasi.*
+
+## Impact
+Model dapat digunakan untuk deteksi penyakit secara real-time.
