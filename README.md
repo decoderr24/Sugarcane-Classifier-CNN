@@ -51,8 +51,8 @@ Model dikembangkan menggunakan pendekatan **Transfer Learning** dengan arsitektu
 
 3.  **Proses Training**:
     * **Fase 1 (Feature Extraction)**: Melatih hanya bagian *classifier head* dengan *base model* yang sepenuhnya dibekukan.
-    * **Fase 2 (Fine-Tuning)**: "Mencairkan" (*unfreezing*) sebagian kecil lapisan atas dari *base model* dan melatihnya kembali dengan *learning rate* yang sangat kecil untuk menyesuaikan fitur dengan dataset spesifik.
-    * **Callbacks**: Proses training dioptimalkan dengan `ModelCheckpoint` (menyimpan model terbaik), `EarlyStopping` (menghentikan training jika tidak ada kemajuan), dan `ReduceLROnPlateau` (mengurangi *learning rate* secara otomatis).
+    * **Fase 2 (Fine-Tuning)**: unfreezing sebagian kecil lapisan atas dari *base model* dan melatihnya kembali dengan *learning rate* yang sangat kecil untuk menyesuaikan fitur dengan dataset spesifik.
+    * **Callbacks**: Proses training dioptimalkan dengan `ModelCheckpoint` , `EarlyStopping` , dan `ReduceLROnPlateau` .
 
 ## Hasil Akhir
 Model akhir berhasil mencapai performa yang solid dalam membedakan keempat kelas penyakit.
