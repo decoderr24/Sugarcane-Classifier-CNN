@@ -54,6 +54,8 @@ Model dikembangkan menggunakan pendekatan **Transfer Learning** dengan arsitektu
     * **Fase 2 (Fine-Tuning)**: unfreezing sebagian kecil lapisan atas dari *base model* dan melatihnya kembali dengan *learning rate* yang sangat kecil untuk menyesuaikan fitur dengan dataset spesifik.
     * **Callbacks**: Proses training dioptimalkan dengan `ModelCheckpoint` , `EarlyStopping` , dan `ReduceLROnPlateau` .
 
+## Hasil Akhir
+
 #### Grafik Training & Validasi
 ![final](https://github.com/user-attachments/assets/8136d9c5-9ba1-4ac7-87cf-72e890315088)
 
