@@ -62,3 +62,7 @@ Model dikembangkan menggunakan pendekatan **Transfer Learning** dengan arsitektu
 
 ## Impact
 Model dapat digunakan untuk deteksi penyakit secara real-time.
+
+
+## Paper : 
+https://jtit.polije.ac.id/index.php/jtit/article/view/456
